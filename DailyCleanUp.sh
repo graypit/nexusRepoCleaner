@@ -29,7 +29,6 @@ function getTaskInfo(){
 function deleteUnusedManifestsAndImages() {
     printf "\rSTARTED | Task: $firstTaskDesc"
     curl -s -u "${NEXUS_USER:-$Nexus_Username}:${NEXUS_PASS:-$Nexus_Password}" -X POST "http://${NEXUS_IP:-$Nexus_IP}:${NEXUS_PORT:-$Nexus_Port}/service/rest/v1/tasks/$deleteUnusedManifestsAndImages/run"
-    lo=1 ; pr="/-\|" ; echo -n 'Waiting: '
     while true
     do
         currentState=$(curl -s -u "${NEXUS_USER:-$Nexus_Username}:${NEXUS_PASS:-$Nexus_Password}" -X GET "http://${NEXUS_IP:-$Nexus_IP}:${NEXUS_PORT:-$Nexus_Port}/service/rest/v1/tasks/$deleteUnusedManifestsAndImages" | jq -r .currentState)
@@ -38,14 +37,13 @@ function deleteUnusedManifestsAndImages() {
         then
             printf "\rFINISHED | Task: $firstTaskDesc"
             break
-        fi && printf "\b${pr:lo++%${#pr}:1}" && sleep 1
+        fi && sleep 2
     done && echo
 }
 # Execute Second Task
 function compactBlobStore() {
     printf "\rSTARTED | Task: $secondTaskDesc"
     curl -s -u "${NEXUS_USER:-$Nexus_Username}:${NEXUS_PASS:-$Nexus_Password}" -X POST "http://${NEXUS_IP:-$Nexus_IP}:${NEXUS_PORT:-$Nexus_Port}/service/rest/v1/tasks/$compactBlobStore/run"
-    lo=1 ; pr="/-\|" ; echo -n 'Waiting: '
     while true
     do
         currentState=$(curl -s -u "${NEXUS_USER:-$Nexus_Username}:${NEXUS_PASS:-$Nexus_Password}" -X GET "http://${NEXUS_IP:-$Nexus_IP}:${NEXUS_PORT:-$Nexus_Port}/service/rest/v1/tasks/$compactBlobStore" | jq -r .currentState)
@@ -54,7 +52,7 @@ function compactBlobStore() {
         then
             printf "\rFINISHED | Task: $secondTaskDesc"
             break
-        fi && printf "\b${pr:lo++%${#pr}:1}" && sleep 1
+        fi && sleep 2
     done && echo
 }
 # Call Functions
